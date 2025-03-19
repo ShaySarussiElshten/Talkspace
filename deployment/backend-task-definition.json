@@ -1,0 +1,48 @@
+{
+  "family": "y-image-sharing-backend",
+  "executionRoleArn": "arn:aws:iam::697508244701:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::697508244701:role/ecsTaskExecutionRole",
+  "networkMode": "awsvpc",
+  "containerDefinitions": [
+    {
+      "name": "y-image-sharing-backend",
+      "image": "697508244701.dkr.ecr.eu-west-1.amazonaws.com/y-image-sharing-backend:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8000,
+          "hostPort": 8000,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        { "name": "PORT", "value": "8000" },
+        { "name": "AWS_REGION", "value": "eu-west-1" },
+        { "name": "AWS_S3_BUCKET", "value": "y-image-sharing-app-697508244701" },
+        { "name": "DYNAMODB_TABLE", "value": "y-image-sharing-images" },
+        { "name": "NODE_ENV", "value": "production" },
+        { "name": "USE_S3_STORAGE", "value": "true" },
+        { "name": "CORS_ALLOWED_ORIGINS", "value": "http://y-image-sharing-frontend-697508244701.s3-website-eu-west-1.amazonaws.com,http://localhost:3000" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/y-image-sharing-backend",
+          "awslogs-region": "eu-west-1",
+          "awslogs-stream-prefix": "ecs",
+          "awslogs-create-group": "true"
+        }
+      },
+      "healthCheck": {
+        "command": ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 120
+      }
+    }
+  ],
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512"
+}
