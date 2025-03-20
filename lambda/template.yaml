@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Lambda function to check and delete expired images
+
+Resources:
+  ImageExpirationCheckerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: image-expiration-checker
+      CodeUri: ./image-expiration-checker/function.zip
+      Handler: index.handler
+      Runtime: nodejs18.x
+      Timeout: 300
+      MemorySize: 256
+      Environment:
+        Variables:
+          REGION: eu-west-1
+          DYNAMODB_TABLE: y-image-sharing-images
+          S3_BUCKET: !Sub y-image-sharing-app-${AWS::AccountId}
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: y-image-sharing-images
+        - S3CrudPolicy:
+            BucketName: !Sub y-image-sharing-app-${AWS::AccountId}
+      Events:
+        ScheduledEvent:
+          Type: Schedule
+          Properties:
+            Schedule: rate(5 minutes)
+            Name: ImageExpirationCheckSchedule
+            Description: Checks for expired images every 5 minutes
+            Enabled: true
+
+Outputs:
+  ImageExpirationCheckerFunction:
+    Description: "Image Expiration Checker Lambda Function ARN"
+    Value: !GetAtt ImageExpirationCheckerFunction.Arn

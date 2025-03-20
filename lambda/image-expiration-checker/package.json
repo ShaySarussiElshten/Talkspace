@@ -1,0 +1,24 @@
+{
+  "name": "image-expiration-checker",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "package": "npm run build && mkdir -p dist && cd dist && zip -r ../function.zip ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.427.0",
+    "@aws-sdk/client-s3": "^3.427.0",
+    "@aws-sdk/lib-dynamodb": "^3.427.0",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.147",
+    "@types/node": "^22.13.10",
+    "typescript": "^5.8.2"
+  }
+}
